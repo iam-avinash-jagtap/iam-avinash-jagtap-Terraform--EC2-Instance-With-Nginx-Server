@@ -54,12 +54,16 @@ resource "aws_security_group" "terra-sg" {
 
 # Create EC2 Instance 
 resource "aws_instance" "Terra-Server" {
+    for_each = tomap({
+      Terra_instance-1 = "t2.micro"
+      Terra_instance-2 = "t2.micro"
+    })
     ami = var.ami
     key_name = aws_key_pair.terraform_key.key_name
     security_groups = [aws_security_group.terra-sg.name]
-    instance_type = var.instance_type
+    instance_type = each.value
     user_data = file("nginx.sh")
     tags = {
-      Name = "Tecj-Aj_Terraform"
+      Name = each.key
     }
 }
